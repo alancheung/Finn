@@ -5,7 +5,7 @@ from tkinter.filedialog import askopenfilename
 
 # Statistics
 import pandas as pd
-from data_processors import FeedDataProcessor
+from data_processors import FeedDataProcessor, DiaperDataProcessor
 
 # DEBUG flags
 import sys
@@ -18,9 +18,11 @@ def main():
     raw_data = get_file_data()
     data_by_type = get_data_types(raw_data=raw_data)
 
-    # Post processing to get ready to digest data
-    feed_processor = FeedDataProcessor(data_by_type)
-    feed_processor.Display()
+    # feed_processor = FeedDataProcessor(data_by_type)
+    # feed_processor.Display()
+
+    diaper_processor = DiaperDataProcessor(data_by_type)
+    diaper_processor.Display()
 
     # print(f'Imported file "{os.path.basename(data_file_path)}" from path {data_file_path}')
     # print(rawData.length)
@@ -52,6 +54,8 @@ def get_file_data():
     # Not exactly "raw"
     data['Start'] = pd.to_datetime(data['Start'])
     data['End'] = pd.to_datetime(data['End'])
+    data['Hour'] = pd.to_datetime(data['Start']).dt.hour
+
 
     return data
 
