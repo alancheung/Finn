@@ -21,4 +21,5 @@ class BaseProcessor(ABC):
     @abstractmethod
     def Display(self) -> None:
         '''Display all of the associated graphs and valuable data'''
+        self.Process()
         pass

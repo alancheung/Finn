@@ -27,13 +27,13 @@ class FeedDataProcessor(BaseProcessor):
         '''
         # TODO figure out error: A value is trying to be set on a copy of a slice from a DataFrame.
         self.data['Feed_Amount'] = self.data['End Condition'].str.extract(r'(\d+)').astype(int)
+        self.data['RollingAvg'] = self.data['Feed_Amount'].rolling(window=7).mean()
 
     def Display(self):
         '''Process and then display 'Feed' data
         '''
-        self.Process()
+        super.Display()
 
-        self.data['RollingAvg'] = self.data['Feed_Amount'].rolling(window=7).mean()
         x = self.data['Start'].map(pd.Timestamp.toordinal)  # Convert 'Start' dates to ordinal numbers (for fitting)
         y = self.data['Feed_Amount']
 
