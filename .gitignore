@@ -1,3 +1,15 @@
+# Special Untracked Files
+untracked.config
+*.untracked.*
+untracked/
+APIKeysLocal.cs
+*.local
+*.local.*
+environment.prod.ts
+*[Cc]onfig.prod.ts
+*[Cc]onfig.prod.js
+authentication.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
