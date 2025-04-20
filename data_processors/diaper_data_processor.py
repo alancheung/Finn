@@ -29,6 +29,7 @@ class DiaperDataProcessor(BaseProcessor):
             - Probability by hour of a small, medium, large pee diapers
             - Probability by hour of a small, medium, large poop diapers
             - Probabiltiy of a diaper by time between changes.
+            - Display legend data (statistics like how many)
 
         @example 
         "Diaper","2025-04-16 10:37",,,,,"Both, pee:medium poo:small",
@@ -67,13 +68,13 @@ class DiaperDataProcessor(BaseProcessor):
         '''
         self.Process()
 
-        _, large_pee_probabilities = self.get_hourly_probabilties_of('pee', 'large')
-        _, medium_pee_probabilities = self.get_hourly_probabilties_of('pee', 'medium')
-        _, small_pee_probabilities = self.get_hourly_probabilties_of('pee', 'small')
+        large_pee_events, large_pee_probabilities = self.get_hourly_probabilties_of('pee', 'large')
+        medium_pee_events, medium_pee_probabilities = self.get_hourly_probabilties_of('pee', 'medium')
+        small_pee_events, small_pee_probabilities = self.get_hourly_probabilties_of('pee', 'small')
 
-        _, large_poo_probabilities = self.get_hourly_probabilties_of('poo', 'large')
-        _, medium_poo_probabilities = self.get_hourly_probabilties_of('poo', 'medium')
-        _, small_poo_probabilities = self.get_hourly_probabilties_of('poo', 'small')
+        large_poo_events, large_poo_probabilities = self.get_hourly_probabilties_of('poo', 'large')
+        medium_poo_events, medium_poo_probabilities = self.get_hourly_probabilties_of('poo', 'medium')
+        small_poo_events, small_poo_probabilities = self.get_hourly_probabilties_of('poo', 'small')
     
         # Setup more spacing between ticks
         spacing = np.arange(24) * 2 # numTicks(aka hours in day) * spacing
@@ -89,7 +90,7 @@ class DiaperDataProcessor(BaseProcessor):
         pee_type_plot.bar(spacing + offsets[0], small_pee_probabilities.values, width=bar_width, color='lightblue', edgecolor='black', label='Small Pee')
         pee_type_plot.bar(spacing + offsets[1], medium_pee_probabilities.values, width=bar_width, color='deepskyblue', edgecolor='black', label='Medium Pee')
         pee_type_plot.bar(spacing + offsets[2], large_pee_probabilities.values, width=bar_width, color='gold', edgecolor='black', label='Large Pee')
-        pee_type_plot.set_title('Probability of Pee Type by Hour')
+        pee_type_plot.set_title(f'Probability of Pee Type ({len(large_pee_events)} / {len(medium_pee_events)} / {len(small_pee_events)}) by Hour')
         pee_type_plot.set_ylabel('Probability')
         pee_type_plot.tick_params(labelbottom=True)
         pee_total_plot.set_xticks(spacing)
@@ -101,7 +102,7 @@ class DiaperDataProcessor(BaseProcessor):
         poo_type_plot.bar(spacing + offsets[0], small_poo_probabilities.values, width=bar_width, color='peru', edgecolor='black', label='Small Poo')
         poo_type_plot.bar(spacing + offsets[1], medium_poo_probabilities.values, width=bar_width, color='chocolate', edgecolor='black', label='Medium Poo')
         poo_type_plot.bar(spacing + offsets[2], large_poo_probabilities.values, width=bar_width, color='saddlebrown', edgecolor='black', label='Large Poo')
-        poo_type_plot.set_title('Probability of Poo Type by Hour')
+        poo_type_plot.set_title(f'Probability of Poo Type ({len(large_poo_events)} / {len(medium_poo_events)} / {len(small_poo_events)}) by Hour')
         poo_type_plot.set_ylabel('Probability')
         poo_type_plot.tick_params(labelbottom=True)
         poo_type_plot.set_xticks(spacing)
@@ -145,4 +146,4 @@ class DiaperDataProcessor(BaseProcessor):
 
         # Normalize to probability distribution
         probabilities = (hourly_counts / hourly_counts.sum()).reindex(range(24), fill_value=0)
-        return hourly_counts, probabilities
+        return type_data, probabilities
