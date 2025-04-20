@@ -25,8 +25,6 @@ def main():
     diaper_processor = DiaperDataProcessor(data_by_type)
     diaper_processor.Display()
 
-    plt.show()
-
     # print(f'Imported file "{os.path.basename(data_file_path)}" from path {data_file_path}')
     # print(rawData.length)
 
