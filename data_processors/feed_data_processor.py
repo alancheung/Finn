@@ -31,7 +31,7 @@ class FeedDataProcessor(BaseProcessor):
     def Display(self):
         '''Process and then display 'Feed' data
         '''
-        super.Display()
+        self.Process()
 
         x = self.data['Start'].map(pd.Timestamp.toordinal)  # Convert 'Start' dates to ordinal numbers (for fitting)
         y = self.data['Feed_Amount']

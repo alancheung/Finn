@@ -18,8 +18,8 @@ def main():
     raw_data = get_file_data()
     data_by_type = get_data_types(raw_data=raw_data)
 
-    # feed_processor = FeedDataProcessor(data_by_type)
-    # feed_processor.Display()
+    feed_processor = FeedDataProcessor(data_by_type)
+    feed_processor.Display()
 
     diaper_processor = DiaperDataProcessor(data_by_type)
     diaper_processor.Display()
