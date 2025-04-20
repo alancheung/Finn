@@ -54,8 +54,7 @@ def get_file_data():
     # Not exactly "raw"
     data['Start'] = pd.to_datetime(data['Start'])
     data['End'] = pd.to_datetime(data['End'])
-    data['Hour'] = pd.to_datetime(data['Start']).dt.hour
-
+    data['Hour'] = data['Start'].dt.hour
 
     return data
 
