@@ -25,7 +25,6 @@ class FeedDataProcessor(BaseProcessor):
 
         Ex. Feed	2025-03-26 02:55			Breast Milk	Bottle	45ml	0325 - 2 - 0342\n0313 - 40ml\nBurp\nSecond small take\n\nNo good burps
         '''
-        # TODO figure out error: A value is trying to be set on a copy of a slice from a DataFrame.
         self.data['Feed_Amount'] = self.data['End Condition'].str.extract(r'(\d+)').astype(int)
         self.data['RollingAvg'] = self.data['Feed_Amount'].rolling(window=7).mean()
 

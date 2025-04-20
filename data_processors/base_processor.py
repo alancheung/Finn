@@ -11,7 +11,7 @@ class BaseProcessor(ABC):
     def __init__(self, data_by_type: dict[str, pd.DataFrame]):
         if self.data_type_name not in data_by_type:
             raise ValueError(f"{self.__class__.__name__} requires {self.data_type_name} data in the provided data types.")
-        self.data = data_by_type[self.data_type_name]
+        self.data = data_by_type[self.data_type_name].copy()
 
     @abstractmethod
     def Process(self, data: pd.DataFrame) -> None:
