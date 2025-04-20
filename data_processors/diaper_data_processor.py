@@ -48,17 +48,18 @@ class DiaperDataProcessor(BaseProcessor):
         self.data[f'{self.data_type_name}_Had_Rash'] = (self.data['Start Location'].str
                                                         .contains(r'\bDiaper rash\b', case=False, na=False))
         
-        self.data[f'{self.data_type_name}_Pee_Amount'] = (self.data['Notes'].str
-                                                          .extract(r'Pee:(\w+)', expand=False))
+        self.data[f'{self.data_type_name}_Pee_Amount'] = (self.data['End Condition'].str
+                                                          .extract(r'Pee:(\w+)', expand=False).astype(str))
         self.data[f'{self.data_type_name}_Pee_Amount_Value'] = (self.data[f'{self.data_type_name}_Pee_Amount']
                                                                 .map(self.__AMT_MAPPING))
         
-        self.data[f'{self.data_type_name}_Poop_Amount'] = (self.data['Notes'].str
-                                                          .extract(r'Poo:(\w+)', expand=False))
+        self.data[f'{self.data_type_name}_Poop_Amount'] = (self.data['End Condition'].str
+                                                          .extract(r'Poo:(\w+)', expand=False).astype(str))
         self.data[f'{self.data_type_name}_Poop_Amount_Value'] = (self.data[f'{self.data_type_name}_Poop_Amount']
                                                                  .map(self.__AMT_MAPPING))
 
-        print(self.data.describe())
+        # print(self.data.describe())
+        print(self.data['Diaper_Pee_Amount'].head(), self.data['Notes'].head())
         print(f'Diaper Data Process: {((time.time() - start) * 1000):.2f} ms')
         return self.data
 
@@ -66,33 +67,3 @@ class DiaperDataProcessor(BaseProcessor):
         '''Process and then display data
         '''
         self.Process()
-        # Prepare data for pee by hour
-        pee_data = self.data.dropna(subset=[f'{self.data_type_name}_Pee_Amount_Value'])
-
-        # Create pivot table: rows = Hour, columns = Pee Amount (0–3), values = count
-        pivot = pee_data.pivot_table(
-            index='Hour',
-            columns=f'{self.data_type_name}_Pee_Amount_Value',
-            aggfunc='size',
-            fill_value=0
-        )
-
-        # Normalize to get probabilities
-        prob_dist = pivot.div(pivot.sum(axis=1), axis=0)
-
-        # Plot stacked bar chart
-        plt.figure(figsize=(12, 6))
-        prob_dist.plot(kind='bar', stacked=True, colormap='Pastel1')
-
-        plt.title('Probability Distribution of Pee Amounts by Hour')
-        plt.xlabel('Hour of Day')
-        plt.ylabel('Probability')
-        plt.legend(
-            title='Pee Amount',
-            labels=['None', 'Small', 'Medium', 'Large'],
-            loc='upper right'
-        )
-        plt.xticks(rotation=0)
-        plt.grid(axis='y')
-        plt.tight_layout()
-        plt.show()
