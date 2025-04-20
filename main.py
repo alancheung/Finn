@@ -6,6 +6,7 @@ from tkinter.filedialog import askopenfilename
 # Statistics
 import pandas as pd
 from data_processors import FeedDataProcessor, DiaperDataProcessor
+import matplotlib as plt
 
 # DEBUG flags
 import sys
@@ -23,6 +24,8 @@ def main():
 
     diaper_processor = DiaperDataProcessor(data_by_type)
     diaper_processor.Display()
+
+    plt.show()
 
     # print(f'Imported file "{os.path.basename(data_file_path)}" from path {data_file_path}')
     # print(rawData.length)

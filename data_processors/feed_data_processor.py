@@ -82,4 +82,3 @@ class FeedDataProcessor(BaseProcessor):
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         
         plt.tight_layout()
-        plt.show()
