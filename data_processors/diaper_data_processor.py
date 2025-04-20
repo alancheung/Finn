@@ -68,9 +68,6 @@ class DiaperDataProcessor(BaseProcessor):
         '''
         # TODO FIX IT?
         self.Process()
-
-        pee_events, pee_probabilities = self.get_hourly_probabilties_of('pee')
-        poo_events, poo_probabilities = self.get_hourly_probabilties_of('poo')
     
         # Setup more spacing between ticks
         spacing = np.arange(24) * 2 # numTicks(aka hours in day) * spacing
@@ -78,27 +75,6 @@ class DiaperDataProcessor(BaseProcessor):
         # Shift the bars to be side by side
         bar_width = 0.8
         offsets = [-bar_width, 0, bar_width]
-        
-        _, (pee_type_plot, poo_type_plot) = plt.subplots(2, 1, figsize=(12, 30), sharex=True)
-        plt.subplots_adjust(hspace=0.3)
-
-        # Plot Pee
-        pee_probabilities.plot(ax=pee_type_plot, kind='bar', stacked=True, figsize=(12, 30), colormap='YlGnBu', label='Pee')
-        pee_type_plot.set_title(f'Probability of Pee Type by Hour')
-        pee_type_plot.set_ylabel('Probability')
-        pee_type_plot.tick_params(labelbottom=True)
-        pee_type_plot.set_xticklabels([str(h) for h in range(24)])
-        pee_type_plot.grid(axis='y', linestyle='--', alpha=0.7)
-        pee_type_plot.legend(loc='upper left')
-
-        # Plot Poo
-        poo_probabilities.plot(ax=poo_type_plot, kind='bar', stacked=True, figsize=(12, 30), colormap='YlGnBu', label='Poo')
-        poo_type_plot.set_title(f'Probability of Poo Type by Hour')
-        poo_type_plot.set_ylabel('Probability')
-        poo_type_plot.tick_params(labelbottom=True)
-        poo_type_plot.set_xticklabels([str(h) for h in range(24)])
-        poo_type_plot.grid(axis='y', linestyle='--', alpha=0.7)
-        poo_type_plot.legend(loc='upper left')
 
         _, (pee_total_plot, poo_total_plot) = plt.subplots(2, 1, figsize=(12, 30), sharex=True)
         plt.subplots_adjust(hspace=0.5)
@@ -129,6 +105,30 @@ class DiaperDataProcessor(BaseProcessor):
         poo_total_plot.set_xticks(spacing)
         poo_total_plot.set_xticklabels([str(h) for h in range(24)])
         poo_total_plot.grid(axis='y', linestyle='--', alpha=0.7)
+
+        _, (pee_type_plot, poo_type_plot) = plt.subplots(2, 1, figsize=(12, 30), sharex=True)
+        plt.subplots_adjust(hspace=0.3)
+
+        pee_events, pee_probabilities = self.get_hourly_probabilties_of('pee')
+        poo_events, poo_probabilities = self.get_hourly_probabilties_of('poo')
+
+        # Plot Pee
+        pee_probabilities.plot(ax=pee_type_plot, kind='bar', stacked=True, figsize=(12, 30), colormap='YlGnBu', label='Pee')
+        pee_type_plot.set_title(f'Probability of Pee Type by Hour')
+        pee_type_plot.set_ylabel('Probability')
+        pee_type_plot.tick_params(labelbottom=True)
+        pee_type_plot.set_xticklabels([str(h) for h in range(24)])
+        pee_type_plot.grid(axis='y', linestyle='--', alpha=0.7)
+        pee_type_plot.legend(loc='upper left')
+
+        # Plot Poo
+        poo_probabilities.plot(ax=poo_type_plot, kind='bar', stacked=True, figsize=(12, 30), colormap='YlGnBu', label='Poo')
+        poo_type_plot.set_title(f'Probability of Poo Type by Hour')
+        poo_type_plot.set_ylabel('Probability')
+        poo_type_plot.tick_params(labelbottom=True)
+        poo_type_plot.set_xticklabels([str(h) for h in range(24)])
+        poo_type_plot.grid(axis='y', linestyle='--', alpha=0.7)
+        poo_type_plot.legend(loc='upper left')
 
         plt.show()
 
