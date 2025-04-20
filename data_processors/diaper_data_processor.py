@@ -1,5 +1,6 @@
 from data_processors.base_processor import BaseProcessor
 
+import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -35,8 +36,8 @@ class DiaperDataProcessor(BaseProcessor):
         "Diaper","2025-04-16 07:31",,,,,"Pee:small",
         "Diaper","2025-03-06 03:33",,"red","Loose","Diaper rash","Poo:large","Orange"
         '''
-        # TODO figure out error: A value is trying to be set on a copy of a slice from a DataFrame.
-
+        start = time.time()
+        
         # Straight transformations
         self.data[f'{self.data_type_name}_Poop_Color'] = self.data['Duration']
         self.data[f'{self.data_type_name}_Poop_Type'] = self.data['Start Condition']
@@ -49,13 +50,49 @@ class DiaperDataProcessor(BaseProcessor):
         
         self.data[f'{self.data_type_name}_Pee_Amount'] = (self.data['Notes'].str
                                                           .extract(r'Pee:(\w+)', expand=False))
-
+        self.data[f'{self.data_type_name}_Pee_Amount_Value'] = (self.data[f'{self.data_type_name}_Pee_Amount']
+                                                                .map(self.__AMT_MAPPING))
+        
         self.data[f'{self.data_type_name}_Poop_Amount'] = (self.data['Notes'].str
                                                           .extract(r'Poo:(\w+)', expand=False))
+        self.data[f'{self.data_type_name}_Poop_Amount_Value'] = (self.data[f'{self.data_type_name}_Poop_Amount']
+                                                                 .map(self.__AMT_MAPPING))
+
         print(self.data.describe())
+        print(f'Diaper Data Process: {((time.time() - start) * 1000):.2f} ms')
         return self.data
 
     def Display(self):
         '''Process and then display data
         '''
         self.Process()
+        # Prepare data for pee by hour
+        pee_data = self.data.dropna(subset=[f'{self.data_type_name}_Pee_Amount_Value'])
+
+        # Create pivot table: rows = Hour, columns = Pee Amount (0–3), values = count
+        pivot = pee_data.pivot_table(
+            index='Hour',
+            columns=f'{self.data_type_name}_Pee_Amount_Value',
+            aggfunc='size',
+            fill_value=0
+        )
+
+        # Normalize to get probabilities
+        prob_dist = pivot.div(pivot.sum(axis=1), axis=0)
+
+        # Plot stacked bar chart
+        plt.figure(figsize=(12, 6))
+        prob_dist.plot(kind='bar', stacked=True, colormap='Pastel1')
+
+        plt.title('Probability Distribution of Pee Amounts by Hour')
+        plt.xlabel('Hour of Day')
+        plt.ylabel('Probability')
+        plt.legend(
+            title='Pee Amount',
+            labels=['None', 'Small', 'Medium', 'Large'],
+            loc='upper right'
+        )
+        plt.xticks(rotation=0)
+        plt.grid(axis='y')
+        plt.tight_layout()
+        plt.show()
